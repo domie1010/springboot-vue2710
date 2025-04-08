@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChanpinDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.chanpin_name as chanpinName
+        ,a.chanpin_types as chanpinTypes
+        ,a.chanpin_jinghanlinag as chanpinJinghanlinag
+        ,a.chanpin_baozhiqi as chanpinBaozhiqi
+        ,a.chanpin_peiliao as chanpinPeiliao
+        ,a.chanpin_changhe as chanpinChanghe
+        ,a.chanpin_photo as chanpinPhoto
+        ,a.chanpin_new_money as chanpinNewMoney
+        ,a.chanpin_content as chanpinContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChanpinView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM chanpin  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.chanpinName != '' and params.chanpinName != null and params.chanpinName != 'null' ">
+                and a.chanpin_name like CONCAT('%',#{params.chanpinName},'%')
+            </if>
+            <if test="params.chanpinTypes != null">
+                and a.chanpin_types = #{params.chanpinTypes}
+            </if>
+            <if test="params.chanpinJinghanlinagStart != null">
+                <![CDATA[  and a.chanpin_jinghanlinag >= #{params.chanpinJinghanlinagStart}   ]]>
+            </if>
+            <if test="params.chanpinJinghanlinagEnd != null">
+                <![CDATA[  and a.chanpin_jinghanlinag <= #{params.chanpinJinghanlinagEnd}   ]]>
+            </if>
+            <if test=" params.chanpinBaozhiqi != '' and params.chanpinBaozhiqi != null and params.chanpinBaozhiqi != 'null' ">
+                and a.chanpin_baozhiqi like CONCAT('%',#{params.chanpinBaozhiqi},'%')
+            </if>
+            <if test=" params.chanpinPeiliao != '' and params.chanpinPeiliao != null and params.chanpinPeiliao != 'null' ">
+                and a.chanpin_peiliao like CONCAT('%',#{params.chanpinPeiliao},'%')
+            </if>
+            <if test=" params.chanpinChanghe != '' and params.chanpinChanghe != null and params.chanpinChanghe != 'null' ">
+                and a.chanpin_changhe like CONCAT('%',#{params.chanpinChanghe},'%')
+            </if>
+            <if test="params.chanpinNewMoneyStart != null ">
+                <![CDATA[  and a.chanpin_new_money >= #{params.chanpinNewMoneyStart}   ]]>
+            </if>
+            <if test="params.chanpinNewMoneyEnd != null ">
+                <![CDATA[  and a.chanpin_new_money <= #{params.chanpinNewMoneyEnd}   ]]>
+            </if>
+            <if test=" params.chanpinContent != '' and params.chanpinContent != null and params.chanpinContent != 'null' ">
+                and a.chanpin_content like CONCAT('%',#{params.chanpinContent},'%')
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>

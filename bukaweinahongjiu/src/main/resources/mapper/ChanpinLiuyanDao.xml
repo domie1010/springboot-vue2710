@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChanpinLiuyanDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.chanpin_id as chanpinId
+        ,a.yonghu_id as yonghuId
+        ,a.chanpin_liuyan_content as chanpinLiuyanContent
+        ,a.reply_content as replyContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChanpinLiuyanView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,chanpin.chanpin_name as chanpinName
+        ,chanpin.chanpin_types as chanpinTypes
+        ,chanpin.chanpin_jinghanlinag as chanpinJinghanlinag
+        ,chanpin.chanpin_baozhiqi as chanpinBaozhiqi
+        ,chanpin.chanpin_peiliao as chanpinPeiliao
+        ,chanpin.chanpin_changhe as chanpinChanghe
+        ,chanpin.chanpin_photo as chanpinPhoto
+        ,chanpin.chanpin_new_money as chanpinNewMoney
+        ,chanpin.chanpin_content as chanpinContent
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.yonghu_photo as yonghuPhoto
+
+        FROM chanpin_liuyan  a
+        left JOIN chanpin chanpin ON a.chanpin_id = chanpin.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.chanpinId != null">
+                and a.chanpin_id = #{params.chanpinId}
+            </if>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.chanpinLiuyanContent != '' and params.chanpinLiuyanContent != null and params.chanpinLiuyanContent != 'null' ">
+                and a.chanpin_liuyan_content like CONCAT('%',#{params.chanpinLiuyanContent},'%')
+            </if>
+            <if test=" params.replyContent != '' and params.replyContent != null and params.replyContent != 'null' ">
+                and a.reply_content like CONCAT('%',#{params.replyContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+            <if test=" params.chanpinName != '' and params.chanpinName != null and params.chanpinName != 'null' ">
+                and chanpin.chanpin_name like CONCAT('%',#{params.chanpinName},'%')
+            </if>
+            <if test="params.chanpinTypes != null">
+                and chanpin.chanpin_types = #{params.chanpinTypes}
+            </if>
+
+            <if test="params.chanpinJinghanlinagStart != null ">
+                <![CDATA[  and chanpin.chanpin_jinghanlinag >= #{params.chanpinJinghanlinagStart}   ]]>
+            </if>
+            <if test="params.chanpinJinghanlinagEnd != null ">
+                <![CDATA[  and chanpin.chanpin_jinghanlinag <= #{params.chanpinJinghanlinagEnd}   ]]>
+            </if>
+            <if test=" params.chanpinBaozhiqi != '' and params.chanpinBaozhiqi != null and params.chanpinBaozhiqi != 'null' ">
+                and chanpin.chanpin_baozhiqi like CONCAT('%',#{params.chanpinBaozhiqi},'%')
+            </if>
+            <if test=" params.chanpinPeiliao != '' and params.chanpinPeiliao != null and params.chanpinPeiliao != 'null' ">
+                and chanpin.chanpin_peiliao like CONCAT('%',#{params.chanpinPeiliao},'%')
+            </if>
+            <if test=" params.chanpinChanghe != '' and params.chanpinChanghe != null and params.chanpinChanghe != 'null' ">
+                and chanpin.chanpin_changhe like CONCAT('%',#{params.chanpinChanghe},'%')
+            </if>
+            <if test="params.chanpinNewMoneyStart != null ">
+                <![CDATA[  and chanpin.chanpin_new_money >= #{params.chanpinNewMoneyStart}   ]]>
+            </if>
+            <if test="params.chanpinNewMoneyEnd != null ">
+                <![CDATA[  and chanpin.chanpin_new_money <= #{params.chanpinNewMoneyEnd}   ]]>
+            </if>
+            <if test=" params.chanpinContent != '' and params.chanpinContent != null and params.chanpinContent != 'null' ">
+                and chanpin.chanpin_content like CONCAT('%',#{params.chanpinContent},'%')
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>
